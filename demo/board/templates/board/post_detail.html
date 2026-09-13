@@ -10,8 +10,10 @@
 <hr>
 
 <div class="actions">
+    {% if user == post.author %}
     <a href="{% url 'board:post_update' post.pk %}">수정</a>
     <a href="{% url 'board:post_delete' post.pk %}">삭제</a>
+    {% endif %}
     <a href="{% url 'board:post_list' %}">목록으로</a>
 </div>
 
@@ -23,5 +25,14 @@
     <li>아직 댓글이 없습니다.</li>
     {% endfor %}
 </ul>
-<p><em>댓글 작성 기능은 study4(회원 인증)에서 로그인 사용자에게만 열어줍니다.</em></p>
+
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'board:comment_create' post.pk %}">
+    {% csrf_token %}
+    <textarea name="content" rows="2" placeholder="댓글을 입력하세요" required></textarea>
+    <button type="submit">댓글 등록</button>
+</form>
+{% else %}
+<p><a href="{% url 'accounts:login' %}">로그인</a> 후 댓글을 작성할 수 있습니다.</p>
+{% endif %}
 {% endblock %}

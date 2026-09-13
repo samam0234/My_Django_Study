@@ -4,7 +4,9 @@
 
 {% block content %}
 <h1>게시글 목록</h1>
+{% if user.is_authenticated %}
 <p><a href="{% url 'board:post_create' %}">+ 새 글 작성</a></p>
+{% endif %}
 
 <table>
     <thead>

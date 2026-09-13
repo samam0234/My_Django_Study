@@ -126,3 +126,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 커스텀 회원 모델 (accounts.User)
 AUTH_USER_MODEL = 'accounts.User'
+
+# 인증 관련 리다이렉트 설정
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'board:post_list'
+LOGOUT_REDIRECT_URL = 'board:post_list'
