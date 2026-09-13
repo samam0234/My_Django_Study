@@ -1,51 +1,36 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from .models import Post
-from .serializers import PostSerializer
+from .models import Comment, Post
+from .serializers import CommentSerializer, PostDetailSerializer, PostSerializer
 
 
-class PostListAPIView(APIView):
-    """GET: 게시글 목록 조회 / POST: 게시글 작성(로그인 필요)"""
+class PostViewSet(viewsets.ModelViewSet):
+    """게시글 CRUD API.
 
+    - list/create → /api/posts/
+    - retrieve/update/partial_update/destroy → /api/posts/{pk}/
+    라우팅은 Router가 자동으로 생성한다 (study7).
+    """
+
+    queryset = Post.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get(self, request):
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return PostDetailSerializer  # 상세 조회에서만 댓글까지 nested로 포함
+        return PostSerializer
 
-    def post(self, request):
-        serializer = PostSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(author=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
-class PostDetailAPIView(APIView):
-    """GET: 단건 조회 / PUT: 수정 / DELETE: 삭제 (모두 pk 기준)"""
+class CommentViewSet(viewsets.ModelViewSet):
+    """댓글 CRUD API. /api/comments/ 로 노출."""
 
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get_object(self, pk):
-        return get_object_or_404(Post, pk=pk)
-
-    def get(self, request, pk):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
-
-    def put(self, request, pk):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def delete(self, request, pk):
-        post = self.get_object(pk)
-        post.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

@@ -1,8 +1,9 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from . import api_views
 
-urlpatterns = [
-    path('posts/', api_views.PostListAPIView.as_view(), name='api_post_list'),
-    path('posts/<int:pk>/', api_views.PostDetailAPIView.as_view(), name='api_post_detail'),
-]
+router = DefaultRouter()
+router.register('posts', api_views.PostViewSet, basename='api_post')
+router.register('comments', api_views.CommentViewSet, basename='api_comment')
+
+urlpatterns = router.urls
