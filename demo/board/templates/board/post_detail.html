@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>작성자: {{ post.author }} | 작성일: {{ post.created_at|date:'Y-m-d H:i' }}</p>
+<hr>
+<p>{{ post.content|linebreaks }}</p>
+<hr>
+
+<div class="actions">
+    <a href="{% url 'board:post_update' post.pk %}">수정</a>
+    <a href="{% url 'board:post_delete' post.pk %}">삭제</a>
+    <a href="{% url 'board:post_list' %}">목록으로</a>
+</div>
+
+<h2>댓글 ({{ post.comments.count }})</h2>
+<ul>
+    {% for comment in post.comments.all %}
+    <li>{{ comment.author }}: {{ comment.content }} <small>({{ comment.created_at|date:'Y-m-d H:i' }})</small></li>
+    {% empty %}
+    <li>아직 댓글이 없습니다.</li>
+    {% endfor %}
+</ul>
+<p><em>댓글 작성 기능은 study4(회원 인증)에서 로그인 사용자에게만 열어줍니다.</em></p>
+{% endblock %}
