@@ -159,10 +159,28 @@ board/
 3. `board/views.py`를 Generic CBV(ListView/DetailView/CreateView/UpdateView/DeleteView)로 전면 교체
 4. `board/urls.py`를 CRUD 경로로 재구성 (`study1`의 `hello/` 경로는 제거)
 5. 상세 페이지에서 댓글 목록을 읽기 전용으로 표시 (`post.comments.all`, 작성 기능은 study4에서 추가)
+6. `config/urls.py`에 루트 경로(`/`) 리다이렉트 추가 — `board:post_list`가 이 시점부터 사실상 사이트의 메인 화면이 되었기 때문
+
+```python
+# config/urls.py
+from django.views.generic import RedirectView
+
+urlpatterns = [
+    path('', RedirectView.as_view(pattern_name='board:post_list', permanent=False)),
+    path('admin/', admin.site.urls),
+    path('board/', include('board.urls')),
+]
+```
+
+> 💡 `path('')`를 추가하기 전에는 `http://127.0.0.1:8000/`(포트만 있고 경로가 없는 루트 주소)로 접속하면 매칭되는 URL 패턴이 없어 **404**가 떴습니다. `RedirectView`로 루트를 `board:post_list`로 보내주면 사용자가 `/board/`를 몰라도 기본 주소만으로 메인 화면(게시글 목록)에 들어올 수 있습니다. `permanent=False`는 브라우저에 "영구 리다이렉트(301)"로 캐싱되지 않도록 하기 위함(개발 중 경로가 바뀔 수 있으므로 302를 사용).
 
 ### 동작 확인
 
 ```bash
+$ curl -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8001/
+302
+$ curl -o /dev/null -w "%{http_code}\n" -L http://127.0.0.1:8001/
+200
 $ curl -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8001/board/
 200
 $ curl -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8001/board/1/
