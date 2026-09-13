@@ -43,10 +43,10 @@ study 문서 기반 학습 진행 내용을 커밋할 때 지켜야 할 규칙�
 
 ```
 chore: 에이전트 인수인계 문서 및 저장소 초기 설정
-docs: study0 React 기초 이론 정리
-feat: Reflex 프로젝트 생성 및 컴포넌트 실습
-feat: State 클래스로 화면 상태 관리 구현
-feat: 이벤트 핸들러로 CRUD 구현
+docs: study0 Django 기초이론 정리
+feat: study1 Django 프로젝트/앱 생성 및 첫 화면 실습
+feat: study2 회원/게시판 모델 설계 및 마이그레이션
+feat: study4 회원가입/로그인/로그아웃 및 작성자 권한 구현
 ```
 
 ## 4. 커밋 순서

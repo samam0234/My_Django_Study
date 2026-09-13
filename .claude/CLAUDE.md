@@ -5,5 +5,6 @@
 
 ## Claude 관련 참고 사항
 
-- Reflex CLI(`reflex init`, `reflex run` 등) 실행 시 Windows 콘솔 코드페이지 문제로 `UnicodeEncodeError`가 발생할 수 있습니다. `PYTHONUTF8=1`, `PYTHONIOENCODING=utf-8` 환경변수를 설정하고 실행하면 해결됩니다.
-- `reflex init`은 프로젝트 폴더에 자체적으로 `AGENTS.md`/`CLAUDE.md`를 생성합니다. 이 저장소의 인수인계 문서(`.agent/`, `.claude/` 등)와는 목적이 다르므로(전자는 "이 Reflex 앱을 건드릴 때 참고할 프레임워크 팁", 후자는 "이 학습 저장소 전체의 진행 규칙") 혼동하지 않도록 `demo/`, `project/` 생성 시 자동 생성 파일은 정리하고 저장소 공통 문서만 유지합니다.
+- `manage.py shell -c "..."` 등으로 한글이 포함된 데이터를 `print`하면 Windows 콘솔 코드페이지(CP949) 문제로 `UnicodeEncodeError`가 발생하거나 글자가 깨져(mojibake) 보일 수 있습니다. `PYTHONUTF8=1` 환경변수를 붙여 실행하면 대부분 해결되며, 그래도 글자가 깨져 보이는 것은 터미널 표시 문제일 뿐 실제 DB 데이터는 정상입니다.
+- Git Bash의 `/tmp`는 Git Bash 자체의 가상 경로이며, `.venv/Scripts/python.exe`(네이티브 Windows Python)는 이 경로를 직접 읽지 못할 수 있습니다. curl 등으로 `/tmp`에 저장한 파일을 Python으로 다시 읽어야 한다면, bash 안에서 `grep`/`sed`로 필요한 값만 추출하거나 Windows 경로를 사용합니다.
+- curl로 한글이 포함된 JSON body(`-d '{"title":"한글", ...}'`)를 보낼 때 Windows 터미널 코드페이지 문제로 인코딩이 깨질 수 있습니다. 동작 검증용 smoke test에는 영어 payload를 사용하고, 실제 한글 데이터 검증은 브라우저나 `manage.py shell`에서 직접 진행하는 것이 안전합니다.
