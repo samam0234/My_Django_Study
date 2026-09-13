@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}게시글 목록{% endblock %}
+
+{% block content %}
+<form class="search-box" method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="제목/내용 검색">
+    <button type="submit">검색</button>
+</form>
+
+{% if user.is_authenticated %}
+<p><a class="btn" href="{% url 'board:post_create' %}" style="text-decoration:none;display:inline-block;">+ 새 글 작성</a></p>
+{% endif %}
+
+<table>
+    <thead>
+        <tr><th>제목</th><th>작성자</th><th>작성일</th></tr>
+    </thead>
+    <tbody>
+        {% for post in posts %}
+        <tr>
+            <td><a href="{% url 'board:post_detail' post.pk %}">{{ post.title }}</a></td>
+            <td>{{ post.author }}</td>
+            <td>{{ post.created_at|date:'Y-m-d H:i' }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">{% if query %}"{{ query }}"에 대한 검색 결과가 없습니다.{% else %}등록된 게시글이 없습니다.{% endif %}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">이전</a>
+    {% endif %}
+    <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }} 페이지</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">다음</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}댓글 삭제{% endblock %}
+
+{% block content %}
+<h1>댓글을 삭제하시겠습니까?</h1>
+<p>"{{ comment.content }}"</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">삭제</button>
+    <a href="{% url 'board:post_detail' comment.post_id %}">취소</a>
+</form>
+{% endblock %}

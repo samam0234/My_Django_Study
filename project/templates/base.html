@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}미니 커뮤니티 게시판{% endblock %}</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --border: #e5e7eb;
+            --bg-soft: #f8fafc;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 16px 60px;
+            color: #1f2937;
+            background: #fff;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+        header .brand { font-size: 1.25rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+        nav a, nav button { margin-left: 12px; text-decoration: none; color: #374151; font-size: 0.95rem; }
+        nav form { display: inline; }
+        nav button { background: none; border: none; cursor: pointer; padding: 0; font: inherit; }
+        .messages { list-style: none; padding: 0; margin-bottom: 16px; }
+        .messages li { background: #eef6ff; padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+        th { color: #6b7280; font-weight: 600; font-size: 0.85rem; }
+        a { color: var(--primary); }
+        .actions a, .actions button, .actions form { margin-right: 8px; display: inline-block; }
+        .actions form { display: inline; }
+        .actions button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+        form.card p { margin: 10px 0; }
+        input[type=text], input[type=password], textarea {
+            width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font: inherit;
+        }
+        button[type=submit], .btn {
+            background: var(--primary); color: #fff; border: none; border-radius: 6px;
+            padding: 8px 16px; cursor: pointer; font: inherit;
+        }
+        .search-box { display: flex; gap: 8px; margin-bottom: 16px; }
+        .search-box input { flex: 1; }
+        .search-box button { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+        .pagination { margin-top: 16px; display: flex; gap: 12px; }
+        footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); color: #9ca3af; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <a class="brand" href="{% url 'board:post_list' %}">🌿 미니 커뮤니티 게시판</a>
+        <nav>
+            {% if user.is_authenticated %}
+                <span>{{ user.nickname|default:user.username }}님</span>
+                <form action="{% url 'accounts:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">로그아웃</button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}">로그인</a>
+                <a href="{% url 'accounts:signup' %}">회원가입</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        Django 학습 프로젝트(studyFinal) · 템플릿(MTV) + DRF API를 함께 제공합니다. ·
+        <a href="/api/posts/">API 바로가기</a>
+    </footer>
+</body>
+</html>
